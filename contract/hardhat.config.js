@@ -10,6 +10,13 @@ module.exports = {
   // Specify the version of the Solidity compiler you want to use
   solidity: "0.8.24",
   networks: {
+
+
+    local: {
+      url: "http://localhost:8545",
+    },
+
+    /*
     // Configuration for the Moonbeam network
     moonbeam: {
       // URL to the Moonbeam network via OnFinality, including your API key
@@ -18,5 +25,6 @@ module.exports = {
       // Ensure the private key is correctly prefixed with '0x'
       accounts: [process.env.PRIVATE_KEY].filter(Boolean), // Ensure the private key is defined and filter out undefined
     },
+    */
   },
 };
