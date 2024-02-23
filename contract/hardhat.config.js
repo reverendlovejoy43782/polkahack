@@ -1,29 +1,21 @@
-// Imports 
+// Importing Hardhat plugins using require
 require("@nomiclabs/hardhat-ethers");
 
-// Load environment variables
-require("dotenv").config({ path: "../.env" }); 
+// Loading environment variables synchronously using dotenv
+require("dotenv").config({ path: "../.env" });
 
-// Define your Hardhat configuration
-/** @type import('hardhat/config').HardhatUserConfig */
+// Hardhat configuration
 module.exports = {
-  // Specify the version of the Solidity compiler you want to use
   solidity: "0.8.24",
   networks: {
-
-
     local: {
       url: "http://localhost:8545",
     },
-
+   
     /*
-    // Configuration for the Moonbeam network
     moonbeam: {
-      // URL to the Moonbeam network via OnFinality, including your API key
-      url: process.env.RPC_URL, // Should be a string, not an array
-      // List of account private keys to use for transactions on the Moonbeam network
-      // Ensure the private key is correctly prefixed with '0x'
-      accounts: [process.env.PRIVATE_KEY].filter(Boolean), // Ensure the private key is defined and filter out undefined
+      url: process.env.RPC_URL, // Ensure this environment variable is set
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
     */
   },
