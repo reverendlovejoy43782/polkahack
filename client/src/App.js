@@ -208,9 +208,17 @@ function App() {
           <span style={{ fontSize: '18px' }}>
             Current time: {displayCurrentTime}
           </span>
-          <span style={{ fontSize: '18px' }}>
-            Next vote: {displayNextVoteTime}
-          </span>
+
+          
+            {!shouldDisplayWebView ? (
+              <span style={{ fontSize: '18px' }}>
+                Next vote: {displayNextVoteTime}
+              </span>
+            ) : (
+              <span style={{ fontSize: '18px' }}>
+                End of vote: {displayNextVoteTime}
+              </span>
+            )}
 
           <button 
             onClick={increaseBlockTimeAndNumber} 
@@ -231,7 +239,14 @@ function App() {
               
             </div>
           ) : (
-            <iframe src="https://www.beta.digitalewahl.de/vote/crop_betray_style" title="Web View" className="w-full flex-1" />
+
+            <iframe 
+              src="http://127.0.0.1:5000/vote/main_heavy_autumn" 
+              title="Web View" 
+              className="w-full flex-1"
+              sandbox="allow-scripts allow-forms allow-same-origin allow-downloads"
+              loading="lazy"
+            />
           )}
         </div>
       </div>
