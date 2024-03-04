@@ -56,12 +56,12 @@ contract timedVoting {
 
     /// START NEW CODE
 
-    // function for app to retrieve the current phase
+    // function for app to retrieve the current phase (used)
     function getCurrentPhase() public view returns (VotingPhase) {
         return currentPhase;
     }
 
-    // function for app to retrieve the current web view state
+    // function for app to retrieve the current web view state (not used as of now)
     function getCurrentWebViewState() public view returns (WebViewState) {
     return currentWebViewState;
     }

@@ -42,6 +42,10 @@ function App() {
     // State to hold the URL for the iframe
     const [iframeSrc, setIframeSrc] = useState('');
 
+    const [pdfUrl, setPdfUrl] = useState(''); // State to hold the PDF URL received from the iframe page
+    const [hashValue, setHashValue] = useState(''); // State to hold the hash value received from the iframe page
+    const [subscanUrl, setSubscanUrl] = useState(''); // State to hold the Subscan URL received from the iframe page
+
 
     /// START NEW CODE
     // New function to fetch the current voting phase and determine the active group status
@@ -196,13 +200,25 @@ function App() {
 
     useEffect(() => {
       const receiveMessage = (event) => {
-          // Perform origin check for security purposes
-          if (event.origin !== "http://127.0.0.1:5000") return;
-  
-          if (event.data.type === "SET_VOTING_URL") {
-              console.log("Received voting URL from setup page:", event.data.voteUrl);
-              setVotingUrl(event.data.voteUrl); // Set the received URL for later use
-          }
+        console.log("Received message:", event.data);
+        // Perform origin check for security purposes
+        if (event.origin !== "http://127.0.0.1:5000") return;
+
+        if (event.data.type === "SET_VOTING_URL") {
+            console.log("Received voting URL from setup page:", event.data.voteUrl);
+            setVotingUrl(event.data.voteUrl); // Set the received URL for later use
+        }
+
+
+        if (event.data && event.data.type === 'VOTE_DATA') {
+          const { pdfUrl, hashValue, subscanUrl } = event.data;
+    
+          // Do something with the received data, such as updating state
+          setPdfUrl(pdfUrl);
+          setHashValue(hashValue);
+          setSubscanUrl(subscanUrl);
+          console.log('Received vote data:', pdfUrl, hashValue, subscanUrl);
+        }
       };
   
       window.addEventListener("message", receiveMessage);
