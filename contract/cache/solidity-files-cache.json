@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/thomasmagerl/Documents/Code/polkahack/contract/contracts/timedVoting.sol": {
-      "lastModificationDate": 1708685429825,
-      "contentHash": "2b3b1c403b61ddc5e3e9045ce1dd38d0",
+      "lastModificationDate": 1709537815026,
+      "contentHash": "46a1992244d040f9030994b7699f3bb6",
       "sourceName": "contracts/timedVoting.sol",
       "solcConfig": {
         "version": "0.8.24",

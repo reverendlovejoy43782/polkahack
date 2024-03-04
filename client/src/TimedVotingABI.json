@@ -15,9 +15,9 @@
         },
         {
           "indexed": false,
-          "internalType": "bool",
-          "name": "activeGroup",
-          "type": "bool"
+          "internalType": "enum timedVoting.WebViewState",
+          "name": "webViewState",
+          "type": "uint8"
         }
       ],
       "name": "CloseWebView",
@@ -34,26 +34,13 @@
         },
         {
           "indexed": false,
-          "internalType": "bool",
-          "name": "activeGroup",
-          "type": "bool"
+          "internalType": "enum timedVoting.WebViewState",
+          "name": "webViewState",
+          "type": "uint8"
         }
       ],
       "name": "DisplayWebView",
       "type": "event"
-    },
-    {
-      "inputs": [],
-      "name": "activeGroup",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
     },
     {
       "inputs": [],
@@ -78,6 +65,58 @@
     },
     {
       "inputs": [],
+      "name": "currentPhase",
+      "outputs": [
+        {
+          "internalType": "enum timedVoting.VotingPhase",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "currentWebViewState",
+      "outputs": [
+        {
+          "internalType": "enum timedVoting.WebViewState",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getCurrentPhase",
+      "outputs": [
+        {
+          "internalType": "enum timedVoting.VotingPhase",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getCurrentWebViewState",
+      "outputs": [
+        {
+          "internalType": "enum timedVoting.WebViewState",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "nextExecutionTime",
       "outputs": [
         {
@@ -97,19 +136,6 @@
           "internalType": "address",
           "name": "",
           "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "webViewDisplayed",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
         }
       ],
       "stateMutability": "view",

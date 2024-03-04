@@ -26,14 +26,49 @@ function App() {
     const provider = useMemo(() => new JsonRpcProvider(localRpcUrl), []);
     const signer = useMemo(() => new Wallet(testPrivateKey, provider), [provider]);
     const contract = useMemo(() => new Contract(contractAddress, TimedVotingABI, signer), [signer]);
+
+    /// START NEW CODE
+    const [currentPhase, setCurrentPhase] = useState(0); // Assuming 0 corresponds to the 'Idle' phase
+    /// END NEW CODE
     const [activeGroup, setActiveGroup] = useState(false); // State to hold the activeGroup flag
     
     // State to hold the current and next vote times for display
     const [displayCurrentTime, setDisplayCurrentTime] = useState('');
     const [displayNextVoteTime, setDisplayNextVoteTime] = useState('');
 
+    // State to hold the voting URL received from the iframe page
+    const [votingUrl, setVotingUrl] = useState(''); // Add this line
 
+    // State to hold the URL for the iframe
+    const [iframeSrc, setIframeSrc] = useState('');
+
+
+    /// START NEW CODE
+    // New function to fetch the current voting phase and determine the active group status
+    const fetchCurrentPhaseActiveGroup = useCallback(async () => {
+      try {
+          // Correctly call getCurrentPhase as a function
+          const phase = await contract.getCurrentPhase();
+          const phaseNumber = Number(phase); // Convert BigNumber to a number
+          console.log('Current phase:', phaseNumber);
+          // Assuming phase '0' corresponds to 'Idle'. Adjust according to your enum in the smart contract
+          const isActiveGroup = phaseNumber !== 0;
+          console.log('Is group active:', isActiveGroup);
+          setActiveGroup(isActiveGroup); // Update activeGroup based on whether the phase is Idle
+          setCurrentPhase(phaseNumber); // Update currentPhase with the correct number
+      } catch (error) {
+          console.error('Error fetching current phase:', error);
+      }
+    }, [contract]);
+    
+
+    // Use the new function in an effect hook to fetch the current phase when the component mounts or when the contract instance changes
+    useEffect(() => {
+      fetchCurrentPhaseActiveGroup();
+    }, [fetchCurrentPhaseActiveGroup]);
+    /// END NEW CODE
     // Function to fetch the activeGroup flag from the contract
+    /*
     const fetchActiveGroupFlag = useCallback(async () => {
       try {
           const isActiveGroup = await contract.activeGroup();
@@ -43,11 +78,14 @@ function App() {
           console.error('Error fetching active group flag:', error);
       }
     }, [contract]);
+    
 
     // Call the function to fetch the activeGroup flag when the component mounts and when contract changes
+    
     useEffect(() => {
       fetchActiveGroupFlag();
     }, [fetchActiveGroupFlag]); // Dependency array ensures the function is called when needed
+    */
 
     const increaseBlockTimeAndNumber = async () => {
       // Call a function to increase the block time by 30 seconds and the block number by 1
@@ -95,14 +133,13 @@ function App() {
     // Function to call the createGroup method on the contract
     const createGroup = async () => {
       try {
+        console.log('Attempting to create group with current phase:', currentPhase);
         const tx = await contract.createGroup();
         await tx.wait();
         console.log('Group created successfully');
-        // Fetch the activeGroup flag after the transaction is mined
-        await fetchActiveGroupFlag(); // Re-fetch the activeGroup state
+        await fetchCurrentPhaseActiveGroup();
       } catch (error) {
         console.error('Failed to create group:', error);
-        // Display a user-friendly error message or take specific actions based on error type
         alert(`Failed to create group: ${error.message}`);
       }
     };
@@ -114,7 +151,7 @@ function App() {
         await tx.wait();
         console.log('Group closed successfully');
         // Fetch the activeGroup flag after the transaction is mined
-        await fetchActiveGroupFlag(); // Re-fetch the activeGroup state
+        await fetchCurrentPhaseActiveGroup(); // Re-fetch the activeGroup state
       } catch (error) {
         console.error('Failed to close group:', error);
         // Display a user-friendly error message or take specific actions based on error type
@@ -125,17 +162,55 @@ function App() {
   
     // Function to call the checkAndUpdateExecution method on the contract
     const checkAndUpdate = useCallback(async () => {
-        try {
-            const tx = await contract.checkAndUpdateExecution();
-            await tx.wait();
-            console.log('checkAndUpdateExecution called successfully');
-            const webViewStatus = await contract.webViewDisplayed();
-            setShouldDisplayWebView(webViewStatus);
-        } catch (error) {
+      try {
+          const tx = await contract.checkAndUpdateExecution();
+          await tx.wait();
+          console.log('checkAndUpdateExecution called successfully');
+    
+          // Fetch both the current web view state and current phase from the contract
+          const webViewState = await contract.getCurrentWebViewState();
+          const currentPhase = await contract.getCurrentPhase(); // Fetch current phase
+          console.log('Current web view state:', webViewState, 'Current Phase:', currentPhase);
+    
+          // Decision logic to determine which URL to display
+          if (currentPhase === 2 || currentPhase === 3) { // SetupDisplay state or corresponding phase
+              setIframeSrc("http://127.0.0.1:5000/vote_admin");
+              console.log('Displaying setup web view with URL:', iframeSrc);
+              setShouldDisplayWebView(true);
+          } else if (currentPhase === 1 || currentPhase === 4) { // VotingDisplay state or corresponding voting phase
+              
+              console.log('Displaying voting web view with URL:', votingUrl);
+              setIframeSrc(votingUrl);
+              setShouldDisplayWebView(true);
+          } else {
+              console.log('Not displaying any web view.');
+              setShouldDisplayWebView(false);
+          }
+      } catch (error) {
           console.error('Failed to call checkAndUpdateExecution:', error);
-          alert(`Failed to call checkAndUpdateExecution: ${error.message}`)
-        }
-    }, [contract]);
+          alert(`Failed to call checkAndUpdateExecution: ${error.message}`);
+      }
+    }, [contract, votingUrl, iframeSrc]);
+    
+
+
+    useEffect(() => {
+      const receiveMessage = (event) => {
+          // Perform origin check for security purposes
+          if (event.origin !== "http://127.0.0.1:5000") return;
+  
+          if (event.data.type === "SET_VOTING_URL") {
+              console.log("Received voting URL from setup page:", event.data.voteUrl);
+              setVotingUrl(event.data.voteUrl); // Set the received URL for later use
+          }
+      };
+  
+      window.addEventListener("message", receiveMessage);
+  
+      return () => window.removeEventListener("message", receiveMessage);
+    }, []);
+  
+  
 
     
 
@@ -205,14 +280,12 @@ function App() {
           <span>
             Vote robot
           </span>
-          <span style={{ fontSize: '18px' }}>
-            Current time: {displayCurrentTime}
-          </span>
+          
 
           
             {!shouldDisplayWebView ? (
               <span style={{ fontSize: '18px' }}>
-                Next vote: {displayNextVoteTime}
+                Next regular vote: {displayNextVoteTime}
               </span>
             ) : (
               <span style={{ fontSize: '18px' }}>
@@ -220,11 +293,7 @@ function App() {
               </span>
             )}
 
-          <button 
-            onClick={increaseBlockTimeAndNumber} 
-            className="w-12 h-12 rounded-md bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
-            +
-          </button>
+          
         </header>
         
         <div className="flex-1 flex flex-col items-center justify-start pt-10">
@@ -232,22 +301,46 @@ function App() {
             <div className="flex flex-col items-center space-y-4">
               
               <button 
-                  onClick={activeGroup ? closeGroup : createGroup} 
+                  onClick={currentPhase === 0 ? createGroup : closeGroup} 
                   className="w-40 h-12 rounded-md bg-indigo-600 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
-                  {activeGroup ? 'Close Group' : 'Create Group'}
+                  {currentPhase === 0 ? 'Create Group' : 'Close Group'}
               </button>
+
+              {activeGroup && (
+                <button 
+                    onClick={() => {/* Implement on demand vote functionality */}} 
+                    className="w-40 h-12 rounded-md bg-indigo-600 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
+                    On Demand Vote
+                </button>
+              )}
+
+              
               
             </div>
+
+
           ) : (
 
             <iframe 
-              src="http://127.0.0.1:5000/vote/main_heavy_autumn" 
+              src= {iframeSrc} 
               title="Web View" 
               className="w-full flex-1"
               sandbox="allow-scripts allow-forms allow-same-origin allow-downloads"
               loading="lazy"
             />
           )}
+
+
+          {/* Footer container for the button */}
+          <div className="mt-auto">
+            <div className="flex justify-start p-4">
+              <button 
+                onClick={increaseBlockTimeAndNumber} 
+                className="w-12 h-12 rounded-md bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
+                +
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );

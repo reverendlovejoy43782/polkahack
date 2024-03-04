@@ -1,4 +1,4 @@
-const { ethers, network } = require("hardhat");
+const { ethers } = require("hardhat");
 let expect;
 
 describe("TimedVoting Contract", function () {
@@ -18,38 +18,39 @@ describe("TimedVoting Contract", function () {
     await timedVoting.deployed();
   });
 
-  it("Should initialize group correctly", async function () {
-    const tx = await timedVoting.initializeGroup();
-    await tx.wait();
+  it("Should start in Idle phase", async function () {
+    const currentPhase = await timedVoting.getCurrentPhase();
+    expect(currentPhase).to.equal(0); // Assuming 0 represents the Idle phase
+  });
 
-    const cycleCounter = await timedVoting.cycleCounter();
-    expect(cycleCounter.toNumber()).to.equal(1); // Convert BigNumber to number
+  it("Should transition to SetupOpen phase when creating a group", async function () {
+    await timedVoting.createGroup();
+    const currentPhase = await timedVoting.getCurrentPhase();
+    expect(currentPhase).to.equal(1); // Assuming 1 represents the SetupOpen phase
+  });
 
-    const nextExecutionTime = await timedVoting.nextExecutionTime();
-    const currentTime = (await ethers.provider.getBlock('latest')).timestamp;
-    expect(nextExecutionTime.toNumber()).to.be.closeTo(currentTime + 120, 5); // Use .toNumber() here too
-});
+  it("Should handle transition through phases correctly", async function () {
+    // Transition to SetupOpen phase
+    await timedVoting.createGroup();
+    let currentPhase = await timedVoting.getCurrentPhase();
+    expect(currentPhase).to.equal(1); // SetupOpen
 
-it("Should handle a full cycle", async function () {
-    await timedVoting.initializeGroup();
-
-    await network.provider.send("evm_increaseTime", [120]);
+    // Simulate time passage and trigger phase transition
+    await network.provider.send("evm_increaseTime", [60]); // Adjust time as per your contract logic
     await network.provider.send("evm_mine");
-
     await timedVoting.checkAndUpdateExecution();
+    
+    // Check phase transitioned to SetupClose (assuming 2 represents SetupClose)
+    currentPhase = await timedVoting.getCurrentPhase();
+    expect(currentPhase).to.equal(2); // SetupClose
 
-    const webViewDisplayed = await timedVoting.webViewDisplayed();
-    expect(webViewDisplayed).to.be.true;
+    // Continue this pattern for other phase transitions as needed
+  });
 
-    await network.provider.send("evm_increaseTime", [30]);
-    await network.provider.send("evm_mine");
-
-    await timedVoting.checkAndUpdateExecution();
-    const cycleCounter = await timedVoting.cycleCounter();
-    expect(cycleCounter.toNumber()).to.equal(2); // Convert BigNumber to number for comparison
-
-    const newWebViewDisplayed = await timedVoting.webViewDisplayed();
-    expect(newWebViewDisplayed).to.be.false;
-});
-
+  it("Should reset to Idle phase when closing a group", async function () {
+    await timedVoting.createGroup();
+    await timedVoting.closeGroup();
+    const currentPhase = await timedVoting.getCurrentPhase();
+    expect(currentPhase).to.equal(0); // Back to Idle
+  });
 });
