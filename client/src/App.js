@@ -36,6 +36,10 @@ function App() {
     const [displayCurrentTime, setDisplayCurrentTime] = useState('');
     const [displayNextVoteTime, setDisplayNextVoteTime] = useState('');
 
+    // flag to indicate if the time is being updated
+    const [isUpdatingTime, setIsUpdatingTime] = useState(false);
+
+
     // State to hold the voting URL received from the iframe page
     const [votingUrl, setVotingUrl] = useState(''); // Add this line
 
@@ -46,9 +50,9 @@ function App() {
     // State to hold the URL for the iframe
     const [iframeSrc, setIframeSrc] = useState('');
 
-    const [pdfUrl, setPdfUrl] = useState(''); // State to hold the PDF URL received from the iframe page
-    const [hashValue, setHashValue] = useState(''); // State to hold the hash value received from the iframe page
-    const [subscanUrl, setSubscanUrl] = useState(''); // State to hold the Subscan URL received from the iframe page
+    //const [pdfUrl, setPdfUrl] = useState(''); // State to hold the PDF URL received from the iframe page
+    //const [hashValue, setHashValue] = useState(''); // State to hold the hash value received from the iframe page
+    //const [subscanUrl, setSubscanUrl] = useState(''); // State to hold the Subscan URL received from the iframe page
 
 
     /// START NEW CODE
@@ -160,6 +164,7 @@ function App() {
         console.log('Group closed successfully');
         // Fetch the activeGroup flag after the transaction is mined
         await fetchCurrentPhaseActiveGroup(); // Re-fetch the activeGroup state
+        setVoteData([]); // Clear the vote data from the table
       } catch (error) {
         console.error('Failed to close group:', error);
         // Display a user-friendly error message or take specific actions based on error type
@@ -178,6 +183,7 @@ function App() {
           // Fetch both the current web view state and current phase from the contract
           const webViewState = await contract.getCurrentWebViewState();
           const currentPhase = await contract.getCurrentPhase(); // Fetch current phase
+          setCurrentPhase(Number(currentPhase)); // Update the currentPhase state
           console.log('Current web view state:', webViewState, 'Current Phase:', currentPhase);
     
           // Decision logic to determine which URL to display
@@ -198,7 +204,7 @@ function App() {
           console.error('Failed to call checkAndUpdateExecution:', error);
           alert(`Failed to call checkAndUpdateExecution: ${error.message}`);
       }
-    }, [contract, votingUrl, iframeSrc]);
+    }, [contract, votingUrl, iframeSrc, currentPhase]);
     
 
     useEffect(() => {
@@ -277,7 +283,7 @@ function App() {
                 
                 setDisplayCurrentTime(currentTimeFormattedmmss);
                 console.log('Current time:', currentTimeFormattedmmss);
-
+                
                 // Fetching the next execution time from the contract
                 const nextVoteTime = await contract.nextExecutionTime();
 
@@ -291,6 +297,7 @@ function App() {
                   nextVoteTimeFormatted.getSeconds().toString().padStart(2, '0'),
                 ].join(':');
                 
+
                 setDisplayNextVoteTime(nextVoteTimeFormattedmmss);
                 console.log('Next execution time:', nextVoteTimeFormattedmmss);
 
@@ -302,11 +309,30 @@ function App() {
             } catch (error) {
                 console.error('Error polling block time or triggering execution:', error);
             }
-        }, 10000); // Polling every 10 seconds for demonstration
+        }, 1000); // Polling every 10 seconds for demonstration
 
         // Cleanup function to clear the interval when the component unmounts
         return () => clearInterval(interval);
     }, [provider, contract, checkAndUpdate, activeGroup]); // Include checkAndUpdate in the dependencies
+
+
+
+    // conditional rendering of the message based on the current phase
+    function renderPhaseMessage() {
+      switch (currentPhase) {
+        case 1:
+          return `Next setup: ${displayNextVoteTime}`;
+        case 2:
+          return `End of setup: ${displayNextVoteTime}`;
+        case 3:
+          return `Next vote: ${displayNextVoteTime}`;
+        case 4:
+          return `End of vote: ${displayNextVoteTime}`;
+        default:
+          return null; // or some default message
+      }
+    }
+    console.log('Current Phase before return:', currentPhase);
 
     return (
       <div className="flex flex-col min-h-screen bg-gray-100">
@@ -315,17 +341,10 @@ function App() {
             Vote robot
           </span>
           
-
-          
-            {!shouldDisplayWebView ? (
-              <span style={{ fontSize: '18px' }}>
-                Next vote: {displayNextVoteTime}
-              </span>
-            ) : (
-              <span style={{ fontSize: '18px' }}>
-                End of vote: {displayNextVoteTime}
-              </span>
-            )}
+          {/* Show Next setup, end of setup, next vote or end of vote dependend on the current phase of the contract*/}
+          <span style={{ fontSize: '18px' }}>
+            {renderPhaseMessage()}
+          </span>
 
           
         </header>
@@ -342,7 +361,7 @@ function App() {
 
               {activeGroup && (
                 <button 
-                    onClick={() => {/* Implement on demand vote functionality */}} 
+                    onClick={() => {/* Trigger setup immediatly, not yet implemented*/}} 
                     className="w-40 h-12 rounded-md bg-indigo-600 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
                     On Demand Vote
                 </button>
@@ -366,10 +385,10 @@ function App() {
 
           
 
-          {/* Spacer div added here with mt-12 for margin top */}
+          {/* Spacer div with mt-12 for margin top */}
           <div className="mt-12"></div> 
 
-          {/* Table container with additional styling for beauty and functionality */}
+          {/* Table container for past votes */}
           <div className="w-full max-w-3xl mb-10">
             <table className="table-auto w-full text-left whitespace-no-wrap">
               <thead className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
@@ -398,7 +417,7 @@ function App() {
 
 
 
-          {/* Footer container for the button */}
+          {/* Footer container for the button to manually increase block time */}
           <div className="mt-auto">
             <div className="flex justify-start p-4">
               <button 
