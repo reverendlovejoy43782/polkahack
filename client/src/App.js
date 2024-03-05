@@ -39,6 +39,10 @@ function App() {
     // State to hold the voting URL received from the iframe page
     const [votingUrl, setVotingUrl] = useState(''); // Add this line
 
+    // State to hold the vote data received from the iframe page
+    const [voteData, setVoteData] = useState([]);
+
+
     // State to hold the URL for the iframe
     const [iframeSrc, setIframeSrc] = useState('');
 
@@ -197,7 +201,6 @@ function App() {
     }, [contract, votingUrl, iframeSrc]);
     
 
-
     useEffect(() => {
       const receiveMessage = (event) => {
         console.log("Received message:", event.data);
@@ -211,23 +214,38 @@ function App() {
 
 
         if (event.data && event.data.type === 'VOTE_DATA') {
-          const { pdfUrl, hashValue, subscanUrl } = event.data;
+          const { hashValue, pdfUrl, subscanUrl } = event.data;
     
-          // Do something with the received data, such as updating state
-          setPdfUrl(pdfUrl);
-          setHashValue(hashValue);
-          setSubscanUrl(subscanUrl);
-          console.log('Received vote data:', pdfUrl, hashValue, subscanUrl);
+          // Check if pdfHash is present and subScanUrl is valid (does not end with /None or /error)
+          if (hashValue && !subscanUrl.endsWith('/None') && !subscanUrl.endsWith('/error')) {
+            const fullPdfUrl = `http://127.0.0.1:5000${pdfUrl}`;
+    
+            // Trigger the PDF download
+            //downloadPdf(pdfUrl);
+    
+            // Prepare and set the new vote data
+            const newVoteData = {
+              time: displayCurrentTime,
+              pdf: fullPdfUrl, // Store the full URL for downloading directly
+              proof: hashValue,
+              txOnBlockchain: subscanUrl,
+            };
+    
+            setVoteData(prevData => [...prevData, newVoteData]);
+          } else {
+            console.log('Incomplete vote data received:', event.data);
+          }
         }
       };
   
       window.addEventListener("message", receiveMessage);
   
       return () => window.removeEventListener("message", receiveMessage);
-    }, []);
+    }, [displayCurrentTime]);
   
-  
-
+    
+    
+    
     
 
     
@@ -301,7 +319,7 @@ function App() {
           
             {!shouldDisplayWebView ? (
               <span style={{ fontSize: '18px' }}>
-                Next regular vote: {displayNextVoteTime}
+                Next vote: {displayNextVoteTime}
               </span>
             ) : (
               <span style={{ fontSize: '18px' }}>
@@ -346,6 +364,39 @@ function App() {
             />
           )}
 
+          
+
+          {/* Spacer div added here with mt-12 for margin top */}
+          <div className="mt-12"></div> 
+
+          {/* Table container with additional styling for beauty and functionality */}
+          <div className="w-full max-w-3xl mb-10">
+            <table className="table-auto w-full text-left whitespace-no-wrap">
+              <thead className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3">Time</th>
+                  <th className="px-4 py-3">Vote Result</th>
+                  <th className="px-4 py-3">Proof</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y">
+                {voteData.map(({ id, time, pdf, proof, txOnBlockchain }) => (
+                  <tr className="text-gray-700" key={id}>
+                    <td className="px-4 py-3 text-sm">{time}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <a href={pdf} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-900">Download PDF</a>
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      <a href={txOnBlockchain} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-900">View Transaction</a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+
+
 
           {/* Footer container for the button */}
           <div className="mt-auto">
@@ -357,6 +408,9 @@ function App() {
               </button>
             </div>
           </div>
+
+          
+
         </div>
       </div>
     );
