@@ -1,6 +1,6 @@
 # Voting Station
 
-*A convenient platform for Web 0-3 groups to conduct recurring and on-demand digital votes.*
+*A convenient platform for Web 0 groups to conduct recurring and on-demand digital votes.*
 
 ## Lack of secure and verifiable digital voting for traditional groups
 
@@ -10,12 +10,14 @@ Currently, many of these groups rely on analog methods due to the lack of digita
 
 ## A web2 voting platform with just enough web3 to make it secure, verifiable, trusted
 
-An easy-to-use and modular voting platform is needed that leverages the convenience and speed of Web2, while incorporating just enough of Web3 to infuse trust in digital voting.
+An easy-to-use, mostly automated and modular voting platform is needed that leverages the convenience and speed of Web2, while incorporating just enough of Web3 to infuse trust in digital voting.
 
 
 # How the App Solves the Problem Specifically
 
-Voting Station acts as a wrapper platform around the technical prototype, Voting App, which is not part of this hackathon entry but is essential for the functionality. Our platform integrates with Voting App to streamline the voting process, ensuring secure, verifiable, and easy-to-manage votes. By treating votes and their results as part of a continuous governance stream, Voting Station simplifies the governance process for groups, moving away from the fragmented, one-by-one vote management approach of the past.
+Voting Station acts as a wrapper platform / modular extension around the technical prototype, Voting App. Voting app is not public yet and therefore not part of this hackathons entry but is essential for the functionality of voting station. The functionality of voting station is independend of voting app though in the sense that voting station loads voting app (if voting app is not there it shows an empty window).
+
+Our platform integrates with Voting App to streamline the voting process, ensuring secure, verifiable, and easy-to-manage votes. By treating votes and their results as part of a continuous governance stream, Voting Station simplifies the governance process for groups, moving away from the fragmented, one-by-one vote management approach of the past.
 
 ## Architecture
 
@@ -36,7 +38,12 @@ Voting Station utilizes React for the frontend, ethers.js for Ethereum blockchai
 - Use of Hardhat for Ethereum development, config specifying compiler versions and network settings for local development and potential Moonbeam deployment.
 
 
-## Restrictions of this app compared to the whole concept
+## Restrictions of this app compared to the whole concept (future implementations)
+- Password handling not yet implemented
+- Showing voting app via iframe > api
+- smart contract to create contract for each group 
+- database and member auth 
+- UI fixes e.g. synchronous display of header info (next submission ...)
 
 
 Google Slides Link: INSERT HERE
@@ -58,4 +65,4 @@ Screenshots
 - Insert local rpc url to .env: REACT_APP_LOCAL_RPC_URL=http://127.0.0.1:8545
 - in root/client: npm start
 
-(!) Because the voting app is not part of this entry and not public (yet), the iframe will not show the voting app but the process of voting station is functional.
+(!) Because voting station is an extension of voting app, which is not public (yet), the iframe will not show the voting app but the process of voting station is still functional and can be tested.
