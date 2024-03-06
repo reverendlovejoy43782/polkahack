@@ -27,18 +27,15 @@ function App() {
     const signer = useMemo(() => new Wallet(testPrivateKey, provider), [provider]);
     const contract = useMemo(() => new Contract(contractAddress, TimedVotingABI, signer), [signer]);
 
-    /// START NEW CODE
+    // State to hold the current phase status
     const [currentPhase, setCurrentPhase] = useState(0); // Assuming 0 corresponds to the 'Idle' phase
-    /// END NEW CODE
+
+    // State to hold the activeGroup flag
     const [activeGroup, setActiveGroup] = useState(false); // State to hold the activeGroup flag
     
     // State to hold the current and next vote times for display
     const [displayCurrentTime, setDisplayCurrentTime] = useState('');
     const [displayNextVoteTime, setDisplayNextVoteTime] = useState('');
-
-    // flag to indicate if the time is being updated
-    const [isUpdatingTime, setIsUpdatingTime] = useState(false);
-
 
     // State to hold the voting URL received from the iframe page
     const [votingUrl, setVotingUrl] = useState(''); // Add this line
@@ -50,12 +47,7 @@ function App() {
     // State to hold the URL for the iframe
     const [iframeSrc, setIframeSrc] = useState('');
 
-    //const [pdfUrl, setPdfUrl] = useState(''); // State to hold the PDF URL received from the iframe page
-    //const [hashValue, setHashValue] = useState(''); // State to hold the hash value received from the iframe page
-    //const [subscanUrl, setSubscanUrl] = useState(''); // State to hold the Subscan URL received from the iframe page
 
-
-    /// START NEW CODE
     // New function to fetch the current voting phase and determine the active group status
     const fetchCurrentPhaseActiveGroup = useCallback(async () => {
       try {
@@ -74,30 +66,10 @@ function App() {
     }, [contract]);
     
 
-    // Use the new function in an effect hook to fetch the current phase when the component mounts or when the contract instance changes
+    // Effect hook to fetch the current phase when the component mounts or when the contract instance changes
     useEffect(() => {
       fetchCurrentPhaseActiveGroup();
     }, [fetchCurrentPhaseActiveGroup]);
-    /// END NEW CODE
-    // Function to fetch the activeGroup flag from the contract
-    /*
-    const fetchActiveGroupFlag = useCallback(async () => {
-      try {
-          const isActiveGroup = await contract.activeGroup();
-          console.log('Is group active:', isActiveGroup);
-          setActiveGroup(isActiveGroup); // Update the state with the fetched value
-      } catch (error) {
-          console.error('Error fetching active group flag:', error);
-      }
-    }, [contract]);
-    
-
-    // Call the function to fetch the activeGroup flag when the component mounts and when contract changes
-    
-    useEffect(() => {
-      fetchActiveGroupFlag();
-    }, [fetchActiveGroupFlag]); // Dependency array ensures the function is called when needed
-    */
 
     const increaseBlockTimeAndNumber = async () => {
       // Call a function to increase the block time by 30 seconds and the block number by 1
@@ -204,7 +176,7 @@ function App() {
           console.error('Failed to call checkAndUpdateExecution:', error);
           alert(`Failed to call checkAndUpdateExecution: ${error.message}`);
       }
-    }, [contract, votingUrl, iframeSrc, currentPhase]);
+    }, [contract, votingUrl, iframeSrc]);
     
 
     useEffect(() => {
@@ -309,7 +281,7 @@ function App() {
             } catch (error) {
                 console.error('Error polling block time or triggering execution:', error);
             }
-        }, 1000); // Polling every 10 seconds for demonstration
+        }, 2000); // Polling every 10 seconds for demonstration
 
         // Cleanup function to clear the interval when the component unmounts
         return () => clearInterval(interval);
@@ -317,13 +289,13 @@ function App() {
 
 
 
-    // conditional rendering of the message based on the current phase
+    // conditional rendering of the message based on the current phase, not yet aligned with displayNextVoteTime (async issue)
     function renderPhaseMessage() {
       switch (currentPhase) {
         case 1:
-          return `Next setup: ${displayNextVoteTime}`;
+          return `Next submission: ${displayNextVoteTime}`;
         case 2:
-          return `End of setup: ${displayNextVoteTime}`;
+          return `End of submission: ${displayNextVoteTime}`;
         case 3:
           return `Next vote: ${displayNextVoteTime}`;
         case 4:
@@ -338,7 +310,7 @@ function App() {
       <div className="flex flex-col min-h-screen bg-gray-100">
         <header className="flex justify-between items-center text-2xl font-bold p-4 bg-white shadow-md w-full">
           <span>
-            Vote robot
+            Voting station
           </span>
           
           {/* Show Next setup, end of setup, next vote or end of vote dependend on the current phase of the contract*/}
@@ -349,10 +321,11 @@ function App() {
           
         </header>
         
+        {/* when proposal or vote time window is open, we show the voting app in an iframe, in the future this will be integrated via api to secrurely handle information flow  */}
         <div className="flex-1 flex flex-col items-center justify-start pt-10">
           {!shouldDisplayWebView ? (
             <div className="flex flex-col items-center space-y-4">
-              
+              {/* This button shows createGroup when no group was created yet (current phase = idle) and it shows close group when a group is active (current phase is not idle) */}
               <button 
                   onClick={currentPhase === 0 ? createGroup : closeGroup} 
                   className="w-40 h-12 rounded-md bg-indigo-600 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
@@ -361,7 +334,7 @@ function App() {
 
               {activeGroup && (
                 <button 
-                    onClick={() => {/* Trigger setup immediatly, not yet implemented*/}} 
+                    onClick={() => {/* On demand vote immediatly opens the setup / proposal / submission window and then progresses as the recurring process, this is not yet implemented though*/}} 
                     className="w-40 h-12 rounded-md bg-indigo-600 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
                     On Demand Vote
                 </button>
@@ -371,9 +344,9 @@ function App() {
               
             </div>
 
-
+              
           ) : (
-
+            
             <iframe 
               src= {iframeSrc} 
               title="Web View" 
@@ -388,7 +361,7 @@ function App() {
           {/* Spacer div with mt-12 for margin top */}
           <div className="mt-12"></div> 
 
-          {/* Table container for past votes */}
+          {/* Table container for past votes, no database to persist past votes yet, for future iteration */}
           <div className="w-full max-w-3xl mb-10">
             <table className="table-auto w-full text-left whitespace-no-wrap">
               <thead className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
@@ -415,14 +388,19 @@ function App() {
           </div>
 
 
+          {/* Display Member ID dummy, in future needs to be fetched from database after auth of member */}
+          <div className="flex-grow"></div>
 
+            <div className="w-full flex justify-center items-center bg-gray-100">
+              <span>Member ID: 1234567</span>
+            </div>
 
-          {/* Footer container for the button to manually increase block time */}
+          {/* Footer container for the button to manually increase block time, only for testing because we push the local test blockchain forward manually right now, in future on moonbeam this is not necessary any more */}
           <div className="mt-auto">
             <div className="flex justify-start p-4">
               <button 
                 onClick={increaseBlockTimeAndNumber} 
-                className="w-12 h-12 rounded-md bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
+                className="w-12 h-12 rounded-md bg-gray-500 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
                 +
               </button>
             </div>
