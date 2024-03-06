@@ -55,5 +55,7 @@ Screenshots
 - Choose an account private key from the list of test accounts and insert in .env: REACT_APP_TEST_PRIVATE_KEY=TEST_PRIVATE_KEY
 - In root/contract: npx hardhat run scripts/deployTimedVoting.js --network localhost
 - Insert the contract address from deployment in .env: REACT_APP_CONTRACT_ADDRESS=DEPLOYED_CONTRACT_ADDRESS
+- Insert local rpc url to .env: REACT_APP_LOCAL_RPC_URL=http://127.0.0.1:8545
 - in root/client: npm start
+
 (!) Because the voting app is not part of this entry and not public (yet), the iframe will not show the voting app but the process of voting station is functional.
