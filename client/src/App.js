@@ -19,14 +19,6 @@ const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS; // Deployed cont
 const localRpcUrl = process.env.REACT_APP_LOCAL_RPC_URL; // URL for the local Hardhat network
 const testPrivateKey = process.env.REACT_APP_TEST_PRIVATE_KEY; // Private key for testing
 
-
-/*
-// Configuration for connecting to the deployed contract
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Deployed contract address
-const localRpcUrl = "http://127.0.0.1:8545"; // URL for the local Hardhat network
-const testPrivateKey = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"; // Private key for testing
-*/
-
 // END TESTING CONFIG
 
 function App() {
