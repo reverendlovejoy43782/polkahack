@@ -30,7 +30,7 @@ function App() {
     const contract = useMemo(() => new Contract(contractAddress, TimedVotingABI, signer), [signer]);
 
     // State to hold the current phase status
-    const [currentPhase, setCurrentPhase] = useState(0); // Assuming 0 corresponds to the 'Idle' phase
+    const [currentPhase, setCurrentPhase] = useState(0); // 0 corresponds to the 'Idle' phase
 
     // State to hold the activeGroup flag
     const [activeGroup, setActiveGroup] = useState(false); // State to hold the activeGroup flag
