@@ -6,17 +6,27 @@ import { Contract } from '@ethersproject/contracts';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { Wallet } from '@ethersproject/wallet';
 
-// Importing the ABI of your smart contract for interaction
+// Importing the ABI of smart contract for interaction
 import TimedVotingABI from './TimedVotingABI.json';
 
 // Importing CSS for styling
 import './App.css';
 
 // START TESTING CONFIG
+
+// Configuration for connecting to the deployed contract
+const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS; // Deployed contract address
+const localRpcUrl = process.env.REACT_APP_LOCAL_RPC_URL; // URL for the local Hardhat network
+const testPrivateKey = process.env.REACT_APP_TEST_PRIVATE_KEY; // Private key for testing
+
+
+/*
 // Configuration for connecting to the deployed contract
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Deployed contract address
 const localRpcUrl = "http://127.0.0.1:8545"; // URL for the local Hardhat network
 const testPrivateKey = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"; // Private key for testing
+*/
+
 // END TESTING CONFIG
 
 function App() {
@@ -55,7 +65,7 @@ function App() {
           const phase = await contract.getCurrentPhase();
           const phaseNumber = Number(phase); // Convert BigNumber to a number
           console.log('Current phase:', phaseNumber);
-          // Assuming phase '0' corresponds to 'Idle'. Adjust according to your enum in the smart contract
+          
           const isActiveGroup = phaseNumber !== 0;
           console.log('Is group active:', isActiveGroup);
           setActiveGroup(isActiveGroup); // Update activeGroup based on whether the phase is Idle
@@ -400,7 +410,7 @@ function App() {
             <div className="flex justify-start p-4">
               <button 
                 onClick={increaseBlockTimeAndNumber} 
-                className="w-12 h-12 rounded-md bg-gray-500 text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 flex items-center justify-center">
+                className="w-12 h-12 rounded-md bg-gray-500 text-white shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:bg-gray-500 focus:ring-opacity-50 flex items-center justify-center">
                 +
               </button>
             </div>
