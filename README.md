@@ -57,10 +57,29 @@ Governance Station utilizes React for the frontend, ethers.js for Ethereum block
 
 Demo video: LINK TO LOOM VIDEO
 
-User loads the react app. 
+### Start screen
 
-<img src="assets/24-03-07-polkahack-start-screen.png" alt="Start screen of Governance Station app" title="Start screen" width="50%" />
+User loads the react app and then can create a group which will be an admin feature in the future. Below the button you see current vote results (empty). On the bottom you see the mocked user id. Below that is a + button to manually push the local blockchain block by block (30 seconds steps). This is only for testing (button will be removed) and will be automatic in the future (rythm of the blockchain block time).
 
+<img src="assets/24-03-07-polkahack-start-screen.png" alt="Start screen of Governance Station app" title="Start screen" width="60%" />
+
+### Create group
+
+User clicks on create group and the app calls the smart contract to "activate" it. This call changes current phase from "idle" to "Vote submission window to open" and the next execution time (for the window to open) is set to block time + 1 minute. This means that the voting cycle (waiting, voting proposal time window, waiting, voting time window) started. In production this waiting windows can be set by admin and will be more in the range of days, weeks or months. Now for testing everything is in seconds and minutes.
+
+When the contract current phase is not in idle (active group) the app polls the contract every couple of seconds to compare current time with execution time. This also will be less frequent in the productive version.
+
+On the top right you see the time when the submission window (submit a voting proposal) will open. This is the block time + 1 minute retrieved from the contract by the app. 
+
+The first button "Close group" can be clicked to close the group. This calls the smart contract to set the current phase to idle and the voting cycle / polling stops.
+
+Below you see the "On Demand Vote" button. This is not yet implemented. It will start a voting cycle (voting proposal window, waiting, voting window) right away without interfering with the set recurring voting cycle.
+
+<img src="assets/24-03-07-polkahack-group-created.png" alt="Group screen (before proposal) Governance Station app" title="Before proposal window" width="60%" />
+
+### Voting proposal
+
+<img src="assets/24-03-07-polkahack-proposal.png" alt="Voting proposal screen (iframe) of Voting App inGovernance Station app" title="Proposal window" width="60%" />
 
 Screenshots 
 
