@@ -59,7 +59,8 @@ Demo video: LINK TO LOOM VIDEO
 
 User loads the react app. 
 
-![Start screen](assets/24-03-07-polkahack-start-screen.png "Screenshot Title")
+<img src="assets/24-03-07-polkahack-start-screen.png" alt="Start screen of Governance Station app" title="Start screen" width="50%" />
+
 
 Screenshots 
 
