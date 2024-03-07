@@ -312,7 +312,7 @@ function App() {
       <div className="flex flex-col min-h-screen bg-gray-100">
         <header className="flex justify-between items-center text-2xl font-bold p-4 bg-white shadow-md w-full">
           <span>
-            Voting station
+            Governance station
           </span>
           
           {/* Show Next setup, end of setup, next vote or end of vote dependend on the current phase of the contract*/}

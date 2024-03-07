@@ -15,9 +15,11 @@ An easy-to-use, modular and mostly automated governance platform is needed that 
 
 ## Governance Station offers a modular voting platform
 
-Governance Station (for now) automates voting and creates a digital verification history by employing Moonbeam smart contracts and Voting App. Smart contracts employ block time to define timing windows for voting proposals and voting. Voting App uses Westend and will use Polkadot to store and retrieve proof of vote results. 
+Governance Station automates (for now) voting and creates a digital verification history by employing Moonbeam smart contracts and Voting App. Smart contracts use block time to define timing windows for voting proposals and voting. Voting App uses Westend and will use Polkadot to store and retrieve proof of vote results. 
 
-We started developing Voting App already in 2023 and the repo is not yet public. Therefore only Governance Station but not Voting App is part of this hackathon entry. We would be happy though to show the code in a call.
+We started developing Voting App (Flask, Node.js, light client, Subscan API) already in 2023 and the repo is not yet public. Therefore only Governance Station but not Voting App is part of this hackathon entry. We would be happy though to show the code in a call.
+
+Schema how both apps fit together: https://docs.google.com/presentation/d/1-yV-XbbBpqaD4r5VlJq7Ksai0DLDJFpS4CUJ1Q7cXfc/edit?usp=sharing
 
 ### Architecture
 
@@ -27,10 +29,10 @@ Governance Station utilizes React for the frontend, ethers.js for Ethereum block
 
 - Utilizes React for dynamic user interface management, including state management (useState, useEffect) for controlling web view displays and interaction with Ethereum smart contracts.
 - Incorporates ethers.js for Ethereum blockchain interactions, enabling contract interactions via Contract and JsonRpcProvider components.
+- Establishes a connection to Ethereum networks (local or Moonbeam) using environmental configurations for contract address, RPC URLs, and private keys.
 
 #### Smart contract (EVM, Solidity)
 
-- Establishes a connection to Ethereum networks (local or Moonbeam) using environmental configurations for contract address, RPC URLs, and private keys.
 - Manages voting phases (idle, setup open/close, vote open/close) and web view states through smart contract functions (createGroup, closeGroup, checkAndUpdateExecution) and events (DisplayWebView, CloseWebView).
 - Utilizes Hardhat for smart contract development, with configurations that specify compiler versions and network settings for both local development and future deployment on Moonbeam.
 
@@ -44,15 +46,24 @@ Governance Station utilizes React for the frontend, ethers.js for Ethereum block
 - Dynamic time windows set by admin for recurring and on-demand votes, including recurrence, proposal window, and voting window.
 - Transition from using the Voting App via iframe to API integration.
 - Enhancement of group creation logic, including a smart contract to create/deactivate contracts for each group.
+- Enhancing representation of vote results (table > calendar / time flow, ...)
+- Visualize complete proof chain of vote result (pdf > hash > remark value / tx timestamp)
 - UI fixes, e.g., ensuring the synchronous display of header information (next submission, etc.).
 - Addition of other governance modules, such as member profiles, discussions, treasury, and more.
 
 
-Google Slides Link: INSERT HERE
-
 
 ## User flow
+
+Demo video: LINK TO LOOM VIDEO
+
+User loads the react app. 
+
+![Start screen](assets/24-03-07-polkahack-start-screen.png "Screenshot Title")
+
 Screenshots 
+
+
 
 ### Step 1
 
@@ -60,11 +71,11 @@ Screenshots
 
 - Clone the repo
 - Create .env file in root/client folder
-- In root/contract start the local blockchain (hardhat): 'npx hardhat node'
-- Choose an account private key from the list of test accounts and insert in .env: 'REACT_APP_TEST_PRIVATE_KEY=TEST_PRIVATE_KEY'
-- In root/contract: 'npx hardhat run scripts/deployTimedVoting.js --network localhost'
-- Insert the contract address from deployment in .env: 'REACT_APP_CONTRACT_ADDRESS=DEPLOYED_CONTRACT_ADDRESS'
-- Insert local rpc url to .env: 'REACT_APP_LOCAL_RPC_URL=http://127.0.0.1:8545'
-- in root/client: 'npm start'
+- In root/contract start the local blockchain (hardhat): `npx hardhat node`
+- Choose an account private key from the list of test accounts and insert in .env: `REACT_APP_TEST_PRIVATE_KEY=TEST_PRIVATE_KEY`
+- In root/contract: `npx hardhat run scripts/deployTimedVoting.js --network localhost`
+- Insert the contract address from deployment in .env: `REACT_APP_CONTRACT_ADDRESS=DEPLOYED_CONTRACT_ADDRESS`
+- Insert local rpc url to .env: `REACT_APP_LOCAL_RPC_URL=LOCAL_RPC_URL`
+- in root/client: `npm start`
 
-(!) Because voting station is an extension of voting app, which is not public (yet), the iframe will not show the voting app but the process of voting station is still functional and can be tested.
+(!) Because Governance Station is an extension of Voting App, which is not public (yet), the iframe will not show Voting App but the process of Governance Station is still functional and can be tested.
