@@ -75,14 +75,45 @@ The first button "Close group" can be clicked to close the group. This calls the
 
 Below you see the "On Demand Vote" button. This is not yet implemented. It will start a voting cycle (voting proposal window, waiting, voting window) right away without interfering with the set recurring voting cycle.
 
-<img src="assets/24-03-07-polkahack-group-created.png" alt="Group screen (before proposal) Governance Station app" title="Before proposal window" width="60%" />
+<img src="assets/24-03-07-polkahack-active-group.png" alt="Group screen (before proposal) Governance Station app" title="Before proposal window" width="60%" />
 
 ### Voting proposal
 
-<img src="assets/24-03-07-polkahack-proposal.png" alt="Voting proposal screen (iframe) of Voting App inGovernance Station app" title="Proposal window" width="60%" />
+When current time is execution time (smart contract) in phase "proposal / setup to open" the react app loads Voting App vote proposal screen in an iframe. On the screen you can define your vote proposal:
 
-Screenshots 
+- Voting question
+- Number of voters > this will be handled by Governance Station in future
+- Name of voting group > this will be handled by Governance Station in future
+- Define voting options (binary) > this will be enhanced to more options in the future
+- Duration of the vote > this will be handled by Governance Station in future
 
+<img src="assets/24-03-07-polkahack-proposal.png" alt="Voting proposal screen (iframe) of Voting App in Governance Station app" title="Proposal window" width="60%" />
+
+
+### Voting details
+
+After clicking on "Create vote" Voting App creates and shows a unique id (3 random english words) for the vote together with other vote details and the one time passwords for each voter / member. This will be handled by Governance Station in the future so that if a member proposes a vote, she will only see her one time password. Each members sees a new vote scheduled and a one time password to vote in Governance Station.
+
+<img src="assets/24-03-07-polkahack-vote-details.png" alt="Voting detail screen (iframe) of Voting App in Governance Station app" title="Voting details window" width="60%" />
+
+
+### Voting
+
+After the vote propsal window closed automatically governed by block time (smart contract) and the waiting period is over, the vote window opens. Members has to provide the one time password for this vote.
+
+<img src="assets/24-03-07-polkahack-password.png" alt="Insert vote password screen (iframe) of Voting App in Governance Station app" title="Insert vote password window" width="60%" />
+
+After submitting the password, member can vote.
+
+<img src="assets/24-03-07-polkahack-vote.png" alt="vote screen (iframe) of Voting App in Governance Station app" title="Vote window" width="60%" />
+
+After voting, member sees the vote result. Voting App creates a voting protocol / vote result PDF and stores the hash of this pdf as value in a Westend remark transaction for later proof.
+
+- Voting protocol: This is a pdf that summarizes the outcome of the vote. Example vote protocol: [Example vote protocol](assets/vote_dad_wasp_eager_240307.pdf)
+- SHA256 Hash of voting protocol PDF. Example: 057c138bd66c8f841e7cded3d8b2640538b20ada0e3c9ff531b9d1907belc60f
+- Subscan link to Westend remark transaction containing the pdf hash. Example tx: https://westend.subscan.io/extrinsic/19856177-2
+
+<img src="assets/24-03-07-polkahack-vote-result.png" alt="vote result screen (iframe) of Voting App in Governance Station app" title="Vote result window" width="60%" />
 
 
 ### Step 1
