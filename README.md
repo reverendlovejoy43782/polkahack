@@ -120,7 +120,7 @@ After voting, member sees the vote result. Voting App creates a voting protocol 
 
 This cycle (wait for proposal submission window to open, proposal submission window, wait for voting window to open, voting window) repeats and Governance App shows a history of votes in the table.
 
-<img src="assets/24-03-07-polkahack-voting-history-2.png" alt="Voting history in Governance Station app" title="Voting history" width="60%" />
+<img src="assets/24-03-07-polkahack-vote-history-2.png" alt="Voting history in Governance Station app" title="Voting history" width="60%" />
 
 
 ## Using the code
