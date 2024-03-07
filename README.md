@@ -87,7 +87,7 @@ When current time is execution time (smart contract) in phase "proposal / setup 
 - Define voting options (binary) > this will be enhanced to more options in the future
 - Duration of the vote > this will be handled by Governance Station in future
 
-<img src="assets/24-03-07-polkahack-proposal.png" alt="Voting proposal screen (iframe) of Voting App in Governance Station app" title="Proposal window" width="60%" />
+<img src="assets/24-03-07-polkahack-vote-proposal.png" alt="Voting proposal screen (iframe) of Voting App in Governance Station app" title="Proposal window" width="60%" />
 
 
 ### Voting details
@@ -107,7 +107,7 @@ After submitting the password, member can vote.
 
 <img src="assets/24-03-07-polkahack-vote.png" alt="vote screen (iframe) of Voting App in Governance Station app" title="Vote window" width="60%" />
 
-After voting, member sees the vote result. Voting App creates a voting protocol / vote result PDF and stores the hash of this pdf as value in a Westend remark transaction for later proof.
+After voting, member sees the vote result. Voting App creates a voting protocol / vote result PDF and stores the hash of this pdf as value in a Westend remark transaction for later proof. Governance Station stores the vote result PDF and Subscan link to the proof transaction together with the vote time in a table.
 
 - Voting protocol: This is a pdf that summarizes the outcome of the vote. Example vote protocol: [Example vote protocol](assets/vote_dad_wasp_eager_240307.pdf)
 - SHA256 Hash of voting protocol PDF. Example: 057c138bd66c8f841e7cded3d8b2640538b20ada0e3c9ff531b9d1907belc60f
@@ -116,7 +116,12 @@ After voting, member sees the vote result. Voting App creates a voting protocol 
 <img src="assets/24-03-07-polkahack-vote-result.png" alt="vote result screen (iframe) of Voting App in Governance Station app" title="Vote result window" width="60%" />
 
 
-### Step 1
+### Voting cycle and history
+
+This cycle (wait for proposal submission window to open, proposal submission window, wait for voting window to open, voting window) repeats and Governance App shows a history of votes in the table.
+
+<img src="assets/24-03-07-polkahack-voting-history-2.png" alt="Voting history in Governance Station app" title="Voting history" width="60%" />
+
 
 ## Using the code
 
