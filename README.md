@@ -108,7 +108,7 @@ After submitting the password, member can vote.
 
 <img src="assets/24-03-07-polkahack-vote.png" alt="vote screen (iframe) of Voting App in Governance Station app" title="Vote window" width="60%" />
 
-After voting, member sees the vote result. Voting App creates a voting protocol / vote result PDF and stores the hash of this pdf as value in a Westend remark transaction for later proof. Governance Station stores the vote result PDF and Subscan link to the proof transaction together with the vote time in a table.
+After voting, member sees the vote result. Voting App creates a voting protocol / vote result PDF and stores the hash of this pdf as value in a Westend remark transaction for later proof. Governance Station stores (right now pdf link to Voting App, in future version: decentralized storage like IPFS) the vote result PDF and Subscan link to the proof transaction together with the vote time in a table.
 
 - Voting protocol: This is a pdf that summarizes the outcome of the vote. Example vote protocol: [Example vote protocol](assets/vote_dad_wasp_eager_240307.pdf)
 - SHA256 Hash of voting protocol PDF. Example: 057c138bd66c8f841e7cded3d8b2640538b20ada0e3c9ff531b9d1907belc60f
