@@ -49,14 +49,13 @@ Governance Station utilizes React for the frontend, ethers.js for Ethereum block
 - Enhancement of group creation logic, including a smart contract to create/deactivate contracts for each group.
 - Enhancing representation of vote results (table > calendar / time flow, ...)
 - Visualize complete proof chain of vote result (pdf > hash > remark value / tx timestamp)
-- UI fixes, e.g., ensuring the synchronous display of header information (next submission, etc.).
 - Addition of other governance modules, such as member profiles, discussions, treasury, and more.
 
 
 
 ## User flow
 
-Demo video: LINK TO LOOM VIDEO
+Demo video: https://www.loom.com/share/4b6798938ca444c9bd23c0c325c9f1d5?sid=2abbd290-6763-4e1b-84aa-5d8272ee0576
 
 ### Start screen
 
