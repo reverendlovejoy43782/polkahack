@@ -50,7 +50,7 @@ function App() {
     const [iframeSrc, setIframeSrc] = useState('');
 
 
-    // New function to fetch the current voting phase and determine the active group status
+    // Function to fetch the current voting phase and determine the active group status
     const fetchCurrentPhaseActiveGroup = useCallback(async () => {
       try {
           // Correctly call getCurrentPhase as a function
@@ -116,6 +116,29 @@ function App() {
         };
     }, [contract]);
 
+
+    // Function to fetch the next execution time from the contract
+    const updateNextVoteTime = useCallback(async () => {
+      try {
+        const nextVoteTime = await contract.nextExecutionTime();
+        const nextVoteTimeFormatted = new Date(nextVoteTime.toNumber() * 1000);
+        const nextVoteTimeFormattedString = [
+          nextVoteTimeFormatted.getHours().toString().padStart(2, '0'),
+          nextVoteTimeFormatted.getMinutes().toString().padStart(2, '0'),
+          nextVoteTimeFormatted.getSeconds().toString().padStart(2, '0'),
+        ].join(':');
+    
+        setDisplayNextVoteTime(nextVoteTimeFormattedString);
+        console.log('Updated Next execution time:', nextVoteTimeFormattedString);
+      } catch (error) {
+        console.error("Error fetching next execution time:", error);
+      }
+    }, [contract]); // contract is a dependency here, assuming contract instance might change
+    
+    
+
+
+
     // Function to call the createGroup method on the contract
     const createGroup = async () => {
       try {
@@ -123,7 +146,12 @@ function App() {
         const tx = await contract.createGroup();
         await tx.wait();
         console.log('Group created successfully');
+
+        // Fetch the activeGroup flag
         await fetchCurrentPhaseActiveGroup();
+
+        // Fetch the next execution time
+        await updateNextVoteTime();
       } catch (error) {
         console.error('Failed to create group:', error);
         alert(`Failed to create group: ${error.message}`);
@@ -159,6 +187,9 @@ function App() {
           const currentPhase = await contract.getCurrentPhase(); // Fetch current phase
           setCurrentPhase(Number(currentPhase)); // Update the currentPhase state
           console.log('Current web view state:', webViewState, 'Current Phase:', currentPhase);
+
+          // Fetch the next execution time
+          await updateNextVoteTime();
     
           // Decision logic to determine which URL to display
           if (currentPhase === 2 || currentPhase === 3) { // SetupDisplay state or corresponding phase
@@ -178,7 +209,7 @@ function App() {
           console.error('Failed to call checkAndUpdateExecution:', error);
           alert(`Failed to call checkAndUpdateExecution: ${error.message}`);
       }
-    }, [contract, votingUrl, iframeSrc]);
+    }, [contract, votingUrl, iframeSrc, updateNextVoteTime]);
     
 
     useEffect(() => {
@@ -260,20 +291,6 @@ function App() {
                 
                 // Fetching the next execution time from the contract
                 const nextVoteTime = await contract.nextExecutionTime();
-
-                // 
-
-                // Convert next execution time from the contract to 'mm:ss' format
-                const nextVoteTimeFormatted = new Date(nextVoteTime.toNumber() * 1000);
-                const nextVoteTimeFormattedmmss = [
-                  nextVoteTimeFormatted.getHours().toString().padStart(2, '0'),
-                  nextVoteTimeFormatted.getMinutes().toString().padStart(2, '0'),
-                  nextVoteTimeFormatted.getSeconds().toString().padStart(2, '0'),
-                ].join(':');
-                
-
-                setDisplayNextVoteTime(nextVoteTimeFormattedmmss);
-                console.log('Next execution time:', nextVoteTimeFormattedmmss);
 
                 // If the current time is on or past the next execution time, trigger checkAndUpdateExecution
                 if(currentTime >= nextVoteTime.toNumber()) {

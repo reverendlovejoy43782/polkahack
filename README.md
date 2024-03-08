@@ -17,7 +17,7 @@ An easy-to-use, modular and mostly automated governance platform is needed that 
 
 Governance Station automates (for now) voting and creates a digital verification history by employing Moonbeam smart contracts and Voting App. Smart contracts use block time to define timing windows for voting proposals and voting. Voting App uses Westend and will use Polkadot to store and retrieve proof of vote results. 
 
-We started developing Voting App (Flask, Node.js, light client, Subscan API) already in 2023 and the repo is not yet public. Therefore only Governance Station but not Voting App is part of this hackathon entry. We would be happy though to show the code in a call.
+We started developing Voting App ("stateless" voting app using Flask, Node.js, light client, Subscan API) already in 2023 and the repo is not yet public. Therefore only Governance Station but not Voting App is part of this hackathon entry. We would be happy though to show the code in a call.
 
 Schema how both apps fit together: https://docs.google.com/presentation/d/1-yV-XbbBpqaD4r5VlJq7Ksai0DLDJFpS4CUJ1Q7cXfc/edit?usp=sharing
 
@@ -30,6 +30,7 @@ Governance Station utilizes React for the frontend, ethers.js for Ethereum block
 - Utilizes React for dynamic user interface management, including state management (useState, useEffect) for controlling web view displays and interaction with Ethereum smart contracts.
 - Incorporates ethers.js for Ethereum blockchain interactions, enabling contract interactions via Contract and JsonRpcProvider components.
 - Establishes a connection to Ethereum networks (local or Moonbeam) using environmental configurations for contract address, RPC URLs, and private keys.
+- loads Voting App to perform vote proposal / submission and voting in iframe. In the future it will also integrate the verification route. Voting app is a Flask application utilizing Node.js (light client, Subscan API).
 
 #### Smart contract (EVM, Solidity)
 
