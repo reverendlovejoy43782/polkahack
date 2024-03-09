@@ -28,8 +28,7 @@ async function main() {
     }
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
+// handle errors
 main().catch((error) => {
     console.error("Deployment script failed:", error);
     process.exit(1);

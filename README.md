@@ -2,7 +2,7 @@
 
 *A convenient platform for traditional groups to conduct recurring and on-demand digital votes.*
 
-## Lack of secure and verifiable digital voting for traditional groups
+## Lack of secure and verifiable governance for traditional groups
 
 Groups like works councils in companies, political parties (internal voting), or property owners in real estate entities face challenges in conducting secure and verifiable digital votes. These groups require the capability to conduct either recurring (for instance, monthly) or on-demand voting. The votes are most of the time significant enough to necessitate a secure voting tool capable of digitally verifying and persistently storing the outcomes, ensuring that the history of voting results is verifiably maintained over time.
 

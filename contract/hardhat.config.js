@@ -14,7 +14,7 @@ module.exports = {
    
     /*
     moonbeam: {
-      url: process.env.RPC_URL, // Ensure this environment variable is set
+      url: process.env.RPC_URL,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
     */
